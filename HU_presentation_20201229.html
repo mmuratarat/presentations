@@ -1,0 +1,617 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Presentation - Hacettepe University</title>
+		<meta name="author" content="Mustafa Murat Arat">
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/stackoverflow-light.css" id="highlight-theme">
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>hljs.initHighlightingOnLoad();</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+			  <section>
+				<br><strong>BRINGING BUSINESS, STATISTICAL METHODS AND TRANSFER LEARNING TOGETHER:</strong> <br> Sales Elasticity of Emotional Displays - Large Scale Evidence for Selling with a Straight Face<br><br>
+				Mustafa Murat ARAT <br><br>
+				<small>arat.murat@gmail.com | mmuratarat.github.io/</small><br>
+				<small>Hacettepe University | Tuesday, December 29th, 2020 at 3:00 p.m.</small><br>
+
+				<img src="https://raw.githubusercontent.com/mmuratarat/mmuratarat.github.io/master/assets/favicon.png" alt="logo" width="150" height="150">
+			  </section>
+
+			  <section data-markdown>
+				<textarea data-template>
+					#### An End-to-End Machine Learning Project
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/deployment.png?raw=true" alt="end_to_end_ML"  width="100%" height="100%">
+				</textarea>f
+			  </section>
+
+			  <section data-markdown>
+				<textarea data-template>
+					# Overview
+
+					1. Introduction
+					2. Face Detection and Emotions Classification 
+					3. Linear Mixed-Effects Model Development
+					4. Empirical Results
+					5. Contributions And Summary
+				</textarea>
+			  </section>
+			  <section>
+				<section data-markdown>
+					<textarea data-template>
+					#### INTRODUCTION
+					* No study has investigated the sales impact of salespersons' emotional displays in the presence of other marketing mix activities. Hence, the purpose of the study is to establish the sales elasticity of emotional displays in unscripted and non-prerecorded sales pitches.
+
+					* We address the following knowledge gap: *do salespersons' emotional displays impact sales? If so, how much is the the business impact?*
+
+					* Real marketplace shopping at the direct to consumer retailer with a sales channel, broadcasting shows for 24/7, hosts pitch hedonic products in multiple
+					  product categories to viewers, receives payments by credit cards, and ships orders by mail.
+					</textarea>
+				</section>
+				<section>
+					<p style="text-align:left;">For example,</p>
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/amazon_live.jpg?raw=true" alt="amazon_live">
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					  * We have 6,074 shows (lasting one hour, showing more than 5 distinct items) to obtain 30,448 unique items. 
+
+					  * Total 17,312 hours of the video footage on sales pitches.
+
+					  * Two machine-learning algorithms: a real-time **face detection** and a real-time **emotion classification**.
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					  * We detect the presence or absence of a full-frontal facing faces in 62.32 million frames.
+
+					  * Subsequently, we extract facial expressions of every salesperson, displayed in the subset of frames where a face is identified, classifying the associated facial expressions in 7 categories ("angry", "disgust", "fear",
+						"happy", "sad", "surprise", "neutral").
+
+					  * The data set comprises 148,780 observations across items and shows for which we have the face and emotion variables
+					  as well as the structured data, including marketing mix variables as independent variables and sales quantity as the dependent variable.
+					</textarea>
+				</section>
+			  </section>
+			  <section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Face Detection and Emotions Classification
+					* Each video frame is a colored image with a resolution of 480 X 360 pixels.
+
+					* For every second of the video footage, we select a frame, convert it to gray-scale (because many functions expect grayscale).
+					   
+					* We use a pre-trained <a href="https://opencv.org/" target="_blank">OpenCV (Open Source Computer Vision Library)</a> frontal face detection model based on the Haar cascade algorithm and a pretrained Convolutional Neural Network model, Mini Xception, to extract emotions.
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Haar cascade algorithm
+
+					* It is a machine learning object detection algorithm where a cascade function is trained from a lot of positive (images of faces) and negative images (images without faces). 
+					
+					* It is used to identify objects in an image or video and based on the concept of features by Viola and Jones (2001) <sup>[1](#myfootnote1)</sup>.
+
+					<p style="font-size:15px;"><a name="myfootnote1">1</a>: P. Viola and M. Jones, "Rapid object detection using a boosted cascade of simple features," Proceedings of the 2001 IEEE Computer Society Conference on Computer Vision and Pattern Recognition. CVPR 2001, Kauai, HI, USA, 2001.</p> 
+
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Haar cascade algorithm
+					
+					* Here are some Haar-Features (like convolutional kernel but not trained, is manually determined). The first two are "edge features", used to detect edges. The third is a "line feature",
+					while the fourth is a "four rectangle feature", most likely used to detected a slanted line.
+
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/haar_cascade_features.png?raw=true" alt="haar_cascade">
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Haar cascade algorithm Example
+					
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/haar_cascade_opencv_example.png?raw=true" alt="haar_cascade_example">
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Mini Xception Model
+
+					* For each detected face, the gray-scale frame bounded by the face’s region of interest (ROI) is forwarded to an emotion
+					classification model to infer the emotional state of the salesperson (i.e., show host) by producing probabilities for
+					happiness, sadness, surprise, anger, fear, disgust, and neutral
+
+					* We classify emotional displays using a pre-trained mini-Xception model developed by Arriaga, Plöger, and
+					Valdenegro (2017) <sup>[1](#myfootnote1)</sup>
+					
+					<p style="font-size:15px;"><a name="myfootnote1">1</a>: Arriaga, O., Valdenegro-Toro, M., & Plöger, P. (2017). Real-time Convolutional Neural Networks for emotion and gender classification. ArXiv, abs/1710.07557.</p> 
+				    </textarea>
+				</section>
+
+				<section>
+					<h2>Model Architecture</h2>
+					<div class="ulist">
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/mini_xception_architecture.png?raw=true" alt="Websocket" width="40%" height="40%" style="float: right">
+						<ul style="display: block" style="width: 30%">
+							<li>It is a deep convolutional neural network architecture.</li> 
+
+							<li>Multi-class classification problem.</li>
+
+							<li>4 residual depth-wise separable convolutions where each convolution is followed by a batch normalization operation and a ReLU activation function.</li>
+
+							<li> Softmax at the output layer to spit out probabilities.</li>
+
+							<li> This architecture has approximately 60,000 parameters</li>
+						</ul>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					<h2 data-id="code-title">Tensorflow - Keras Functional API</h2>
+					<pre data-id="code-animation"><code class="python" data-trim data-line-numbers="|1|2|4-11|13-15|13, 17-23|24|26-37|39-50|52-63|65-66|67|69-70"><script type="text/template">
+					def mini_XCEPTION(input_shape, num_classes, l2_regularization=0.01):
+					    regularization = l2(l2_regularization)
+						
+					    # base
+					    img_input = Input(input_shape)
+					    x = Conv2D(8, (3, 3), strides=(1, 1), kernel_regularizer=regularization, use_bias=False)(img_input)
+					    x = BatchNormalization()(x)
+					    x = Activation('relu')(x)
+					    x = Conv2D(8, (3, 3), strides=(1, 1), kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+					    x = Activation('relu')(x)
+
+					    # module 1
+					    residual = Conv2D(16, (1, 1), strides=(2, 2), padding='same', use_bias=False)(x)
+					    residual = BatchNormalization()(residual)
+    
+					    x = SeparableConv2D(16, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+					    x = Activation('relu')(x)
+					    x = SeparableConv2D(16, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+    
+					    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+					    x = layers.add([x, residual])
+    
+					    # module 2
+					    residual = Conv2D(32, (1, 1), strides=(2, 2), padding='same', use_bias=False)(x)
+					    residual = BatchNormalization()(residual)
+    
+					    x = SeparableConv2D(32, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+					    x = Activation('relu')(x)
+					    x = SeparableConv2D(32, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+    
+					    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+					    x = layers.add([x, residual])
+    
+					    # module 3
+					    residual = Conv2D(64, (1, 1), strides=(2, 2), padding='same', use_bias=False)(x)
+					    residual = BatchNormalization()(residual)
+    
+					    x = SeparableConv2D(64, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+					    x = Activation('relu')(x)
+					    x = SeparableConv2D(64, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+    
+					    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+					    x = layers.add([x, residual])
+    
+					    # module 4
+					    residual = Conv2D(128, (1, 1), strides=(2, 2), padding='same', use_bias=False)(x)
+					    residual = BatchNormalization()(residual)
+    
+					    x = SeparableConv2D(128, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+					    x = Activation('relu')(x)
+					    x = SeparableConv2D(128, (3, 3), padding='same', kernel_regularizer=regularization, use_bias=False)(x)
+					    x = BatchNormalization()(x)
+    
+					    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+					    x = layers.add([x, residual])
+    
+					    x = Conv2D(num_classes, (3, 3), padding='same')(x)
+					    x = GlobalAveragePooling2D()(x)
+					    output = Activation('softmax', name='predictions')(x)
+    
+					    model = Model(img_input, output)
+					    return model
+					</script></code></pre>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+					#### Mini Xception Model Example
+					
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/mini_xception_example.png?raw=true" width="50%" height="50%" alt="mini_xception_example">
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Computational Power
+
+					* 4 X Nvidia Geforce Gtx 1080 GPU, 11178 MiB each
+
+					* Intel(R) Xeon(R) CPU E5-2650 v4 (30M Cache, 2.20 GHz), 12 CPU-cores, 24 Total Threads
+					
+				    </textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						Besides the large-scale video analytics, we use time stamps to match these video variables with the structured data on product characteristics 
+						(e.g., sku information on purchase cost, quantity sold, selling price) and display characteristics (e.g., host identity, display duration, and start and end times of item displays). 
+				    </textarea>
+				</section>
+			  </section>
+			  <section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Model Development
+						The conceptual framework of how marketing mix variables (price, display duration, free shipping, and product category) 
+						and sales pitch variables (face, happiness, sadness, surprise, anger, fear, and disgust) *jointly* affect the focal outcome —sales— 
+						that captures customers’ purchase behavior.
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/conceptual_framework.png?raw=true" width="85%" height="85%" alt="mini_xception_example">
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Model 1: Incorporating Salespersons and Time Effects in Marketing Mix Models
+						We investigate how the number of units of an item sold on a given show varies with the item’s price, its duration of display, 
+						whether or not free shipping was waived, the product category to which it belongs, the salespersons who pitched it, and time 
+						effects (day effect, week effect, and year).
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:22pt">
+					<textarea data-template>
+						#### Model 1: Incorporating Salespersons and Time Effects in Marketing Mix Models
+						`$$
+						\begin{split}
+						\ln (Q_{is}) &= \beta_{1} \ln (P_{is}) + \beta_{2}\ln (D_{is}) + \beta_{3} S_{is} + \beta_{4} C_{is} + \gamma^{\prime} H_{s}\\
+						& + \tau^{\prime} T_{is} + \delta_{0} + \delta_{1i} + \delta_{2s} + \epsilon_{is}, \,\,i = 1, \dots, 30,448,\,\, s = 1,\dots,6,074
+						\end{split}
+						$$`
+						* $Q_{is}$: the quantity sold of an item $i$ in the show $s$.
+						* $P_{is}$: represents the item's price in dollars.
+						* $D_{is}$: is the display duration in seconds of an item $i$ in show $s$.
+						* $S_{is}$: captures free shipping or not (0/1).
+						* $C_{is} = \\{0, 1 \\}$: indicate one of the two types of products.
+						* $H_{s}$: person-specific dummy variables, is a $22 \times 1$ dummy vector for each individual salesperson hosting the show $s$.
+						* $T_{is}$: Weeks and days are transformed using (sine, cosine) functions due to the cyclical nature. Year is dummied.
+						* $(\delta_{0}, \delta_{1i},  \delta_{2s}, \epsilon_{is})$: the fixed intercept, random intercept for items, random intercept for shows, 
+						and zero-mean and constant-variance normal error term.
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+						#### Model 2: Incorporating the Presence of Face and Emotional Displays
+						
+						Face Detection Algorithm provides information in real-time on the fraction of the frames with a face when item $i$ was displayed in show $s$,
+						 which we denote by $F_{is}$. In addition, Emotion Classification Algorithm captures the facial expressions in real-time and furnishes 
+						 the probability of happiness display in all the frames with a face when item $i$ was displayed in show $s$, which we denote by $E_{is}^{1}$.
+						 Similarly, we obtain the probability of displays of sadness ($E_{is}^{2}$), surprise ($E_{is}^{3}$), anger ($E_{is}^{4}$), fear ($E_{is}^{5}$),
+						and disgust ($E_{is}^{6}$).
+						`$$
+						\ln (Q_{is}) = \alpha_{0}F_{is} + \alpha_{1} E_{is}^{1} + \alpha_{2} E_{is}^{2} + \alpha_{3} E_{is}^{3} + \alpha_{4} E_{is}^{4} + \alpha_{5} E_{is}^{5} + \alpha_{6} E_{is}^{6} + \text{RHS(Model 1)}
+						$$`
+						where $\alpha_{j}, j = 0, \dots, 6$, are the effects of face and emotional displays on item sales.
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+						#### Elasticity of Emotional Display
+
+						Based on Model 2, we compute the elasticity of each emotional display, $\eta_{j}$, is given by
+						`$$
+						\eta_{j} = \frac{\partial Q_{is}}{\partial E_{is}^{j}}\frac{E_{is}^{j}}{Q_{is}} = \frac{\partial \ln (Q_{is})}{\partial E_{is}^{j}}E_{is}^{j} 
+						$$
+						This equality follows from the definition of elasticity which is the measurement of the percentage change of one economic variable in response to a change in another.
+
+						`$$
+						\text{x-elasticity of y}: \varepsilon =\frac {\partial y/y}{\partial x/x}
+						$$
+						`
+
+						Because elasticity is ratio of percentages, it is a dimensionless quantity, which permits comparisons across variables measured in different units.
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Model 3: Time-varying Effects of Emotional Displays
+
+						The effects of emotional displays may vary over time. For example, surprise at the beginning may be ineffective, but can be effective in the
+						end. Therefore, we extend Model 2 to incorporate emotional display effects over the beginning, middle, and end. 
+						
+						To this end, let $B_{is}^{1}$ represent the probability of happiness display in the first five frames that contain a face; let $M_{is}^{1}$ 
+						measure the probability of happiness display in all the frames that contain a face, except for the first and last five frames with a face; 
+						let $L_{is}^{1}$ represent the probability of happiness display in the last five frames that contain a face. We similarly compute the other 
+						emotional displays.
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+						#### Model 3: Time-varying Effects of Emotional Displays
+
+						`$$
+						\ln (Q_{is}) = \lambda_{0} F_{is} + \sum_{i=1}^{6} \left(\lambda_{1}^{j} B_{is}^{j} + \lambda_{2}^{j} M_{is}^{j} + \lambda_{3}^{j} L_{is}^{j}\right) + \text{RHS(Model 1)}
+						$$`
+
+						where $\lambda_{k}^{j}$ are the effects at the beginning ($k=1$), middle ($k=2$), and end ($k=3$) for each emotional display ($j = 1,\dots,6$). 
+						
+						The model also includes the effect of face presence ($\lambda_{0}$) as well as the effects of marketing mix, salespersons, time, and fixed and random intercepts via the terms from the right hand side of Model 1. 
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+						#### Model 4. Incorporating the Absence of Emotional Displays
+
+						Based on our video footage, the most frequent facial expression is the "neutral" emotional display, i.e., the absence of all six 
+						emotional displays. 
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/emotions_pie_chart.png?raw=true" width="45%" height="45%" alt="emotions_pie_chart">
+
+						What’s the sales impact of no emotional displays? By itself, this question is important as it pertains to the idea of selling with a straight face. 
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Model 4. Incorporating the Absence of Emotional Displays
+
+						It questions the veracity of the Chinese proverb, "**A man without a smiling face must not open a shop**" (Carnegie 1943, p. 94) <sup>[1](#myfootnote1)</sup>. 
+
+						`$$
+						\ln (Q_{is}) = \omega_{0} F_{is} + \omega_{1}N_{is} + \text{RHS(Model 1)}
+						$$`
+
+						where $N_{is}$ measures the probability of the neutral facial expression in all the frames with a face, and ($\omega_{0}, \omega_{1}$) are the effects of face presence and the absence of emotional displays, respectively.
+						
+						<p style="font-size:15px;"><a name="myfootnote1">1</a>: Carnegie, Dale (1943), How to Win Friends & Influence People, Simon & Schuster: NY.</p> 
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### So, we are done...
+
+						We complete the development of four marketing mix models with not
+						only the effects of salespersons, time, fixed and random intercepts, but also the effects
+						of face presence, six emotional displays, and neutral display.
+						
+						We apply the `lmer` function from the `lme4` R-package (a library for linear and generalized linear mixed-effects models) to the data set and estimate the Models 1 through 4. 
+						<a href="https://cran.r-project.org/web/packages/lme4/index.html" target="_blank">https://cran.r-project.org/web/packages/lme4/index.html</a>
+				    </textarea>
+				</section>
+			  </section>
+			  <section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Sales Impact of Marketing Mix, Salespersons, and Time Effects
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/models_results.png?raw=true" width="60%" height="60%" alt="model_results">
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Robustness of the models
+
+						Output indicates a remarkable robustness, from Model 1 through Model 4. The numbers vary pretty much similar for all the variables and across 4 models.
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/price_model_results.png?raw=true" width="70%" height="70%" alt="price_model_results">
+
+						For example, the price elasticity varies from - 0.78, -0.8, -0.8, and -0.8 across the Models 1 through 4, respectively. We can see the similar behaviours for other variables.
+
+						This broad results enhances the confidence in the above results.
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Price
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/price_model_results.png?raw=true" width="70%" height="70%" alt="price_model_results">
+
+						Based on the log-sales and log-price specification, the estimated price equals to -0.78, which means that 10% increase in price corresponds to 7.8% decrease in sales.
+				    </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Display Duration
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/duration_model_results.png?raw=true" width="70%" height="70%" alt="duration_model_results">
+
+						Based on the log-log specification, the estimated display duration corresponds to 5.1% increase in sales. That means that the consumers are responsive to the display of products.
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Free Shipping
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/free_shipping_model_results.png?raw=true" width="70%" height="70%" alt="free_shipping_model_results">
+
+						Based on our log-linear specification, the free shipping increases the quantity sold by $0.18\%$. Using average price of $\\$ 114$ (not included in the slides), the revenue increases by $\\$ 20$ ($ = \\$114 \times 0.18\%$). So the company breaks even when shipping cost does not exceed $\\$ 20$. In other words, it would be profitable to this direct to consumer retailer if shipping cost does not exceed $\\$ 20$.
+					</textarea>
+				</section>
+				<section data-markdown style="font-size:20pt">
+					<textarea data-template>
+						#### Salesperson
+						<div style="clear: left;">
+							<p style="float: left;"><img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/salesperson_model_results.png?raw=true" height="65%" width="65%"></p>
+							<p>The rank ordering of the estimated coefficients shows that the top 3 sales person (Host 15, 20, 18) remain the same across all 4 model estimates as do the bottom 3 performers (Host 10, 4, 9). So, we can easily recognize excellence to reward successful salepersons as well as to detect low performers for re-training.</p>
+						</div>
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Sales Impact of Face and Emotional Displays
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/face_emotions_model_results.png?raw=true" width="57%" height="57%" alt="face_emotions_model_results">
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+						#### Face Presence
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/face_presence_model_results.png?raw=true" width="55%" height="55%" alt="face_presence_model_results">
+
+						Sales increase by $0.61\%$ in the presence of a face, which is common to all the hosts.
+
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/salesperson_15_model_results.png?raw=true" width="55%" height="55%" alt="salesperson_15_model_results">
+
+						Additionally, the total impact of sales pitches by Host 15 is ($0.61 + 0.52$) = $1.13$, which means sales increase by $1.13\%$ when Host 15
+						appears live to the audience. 
+						
+						Customers feel a sense of connection to the host and perceive them to be a part of their social network.<sup>[1](#myfootnote1)</sup>
+						
+						<p style="font-size:13px;"><a name="myfootnote1">1</a>: Stephens, D.L., R.P. Hill, and K. Bergman, Enhancing the consumer-product relationship: Lessons from the QVC home shopping channel. Journal of Business Research, 1996. 37(3): p. 193-200. </p> 
+						
+				    </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+					#### Robustness of Emotions
+					
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/robustness_emotions_model_results.png?raw=true" width="60%" height="60%" alt="robustness_emotions_model_results">
+
+					Like before, the overall effect from Model 2 is similar to the total of the effects at the start, the middle, and the
+					end from Model 3. 
+					
+					For example, the overall effect for anger is (−3.655), whereas the anger effects at the start, the middle, and the end are −1.021, −1.994, and −0.412, respectively. The total effect equals −1.021 − 1.994 − 0.412 = −3.427, which is about the same as the overall anger effect (−3.655) from the Model 2. The same calculation for other emotional displays corroborates. 
+				   </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+					#### Sales Elasticity of Emotional Displays in Sales Pitches
+					
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/sales_elasticities_emotions.png?raw=true" width="45%" height="45%" alt="sales_elasticities_emotions">
+
+					Elasticity of emotional displays of anger (−0.34) decreases sales much more than that due to fear (−0.16), sadness (−0.08), and disgust (−0.03) combined.
+					In other words, a ten percent reduction in anger displays would increase sales by $3.4\%$.
+
+					Yet the happiness elasticity is -0.41 which is a provocative finding. Sales decreases by 4.1% for a ten percent increase in the happiness displays in sales pitches. 
+
+					One would expect salesperson’s happy emotions would transfer to viewers, which in turn would increase sales...
+				   </textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+					#### Robustness Check of Happiness Display
+					
+					Empirically, Is this finding robust?
+
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/happiness_robustness_check.png?raw=true" width="60%" height="60%" alt="sales_elasticities_emotions">
+
+					To this end, first, we conduct robustness check using Model 3. We estimate happiness
+					effects at the start (−0.614), the middle (−0.881), and the end (−0.094). The total effect sums to −0.614 − 0.881 − 0.094 = −1.589, which is about the same as the overall
+					happiness effect
+				   </textarea>
+				</section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+					#### Why Negative Happiness Elasticity?
+
+					* High intensity smiles signal incompetence and decreases purchase intentions. <sup>[1](#myfootnote1)</sup>
+					* Customers interpret displays of intense happiness as inappropriate and inauthentic, which reduces trust in the service provider and decreases satisfaction with the service and products. <sup>[2](#myfootnote2)</sup>. 
+					* This finding is reported to be the case with politicians who do a "permasmile," which are not perceived as genuine, thereby inducing distrust, and in turn, lost votes. <sup>[3](#myfootnote3)</sup>. 
+
+					So, our large-scale evidence not only corroborates with these studies, but also lends support for their external validity.
+
+					<p style="font-size:15px;"><a name="myfootnote1">1</a>: Wang, Z., H. Mao, Y.J. Li, and F. Liu, Smile Big or Not? Effects of Smile Intensity on Perceptions of Warmth and Competence. Journal of Consumer Research, 2016. 43(5): p. 787-805.</p>
+					<p style="font-size:15px;"><a name="myfootnote2">2</a>: Cheshin, A., A. Amit, and G.A. van Kleef, The interpersonal effects of emotion intensity in customer service: Perceived appropriateness and authenticity of attendants' emotional displays shape customer trust and satisfaction. Organizational Behavior and Human Decision Processes, 2018. 144: p. 97-111.</p>
+					<p style="font-size:15px;"><a name="myfootnote3">3</a>: Zetlin, M., Do You Smile Too Much? The Answer Is Probably Yes. Here’s Why that’s Bad. 2017: Inc. <a href="https://www.inc.com/minda-zetlin/do-you-smile-too-much-the-answer-is-probably-yes-heres-why-thats-bad.html" target="_blank">https://www.inc.com/minda-zetlin/do-you-smile-too-much-the-answer-is-probably-yes-heres-why-thats-bad.html</a></p>
+				   </textarea>
+				</section>
+				<section data-markdown  style="font-size:23pt">
+					<textarea data-template>
+					#### Selling with a Straight Face
+
+					<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/neutral_face_presence_results.png?raw=true" width="60%" height="60%" alt="sales_elasticities_emotions">
+
+					
+					Neutral emotional display increases sales by 1.52%. In addition, the face presence effect is $0.76$. Together, when salespersons display neutral facial expressions, the total effect is $2.28\%$ ($= 0.76 + 1.519$) increase in sales.
+
+					The sales elasticity of neutral emotional display is $0.55$. Substantively, sales would increase by $5.5\%$ for a ten percent increase in neutral facial expressions.
+				   </textarea>
+			    </section>
+				<section data-markdown style="font-size:23pt">
+					<textarea data-template>
+						#### Which one of the four models is the best? - Models Comparison
+						<img src="https://github.com/mmuratarat/mmuratarat.github.io/blob/master/_posts/images/slides/models_comparisons.png?raw=true" width="57%" height="57%" alt="models_comparisons">
+						
+						We observe that the adjusted $R^{2}$ is respectable (about 75%), especially given 148,780 observations, but it does discriminate among the four models.
+
+						Other criterion identify that Model 3 as the best one uniformly, thereby attaining convergent validity. Model 3 provides time-varying effects of emotional displays, which exhibits a hockey stick effect: starts, drops, and rises
+
+						Model 2 is parsimonious and competitive, yielding insights new-to-literature on the overall effects of emotions in the presence of marketing mix and the sales elasticities of emotional displays.
+				    </textarea>
+				</section>
+			  </section>
+			  <section data-markdown style="font-size:20pt">
+				<textarea data-template>
+				#### CONTRIBUTIONS AND SUMMARY
+
+				1. It applies state-of-the-art models to detect human faces and extract emotional displays, and formulate new models to estimate the sales impact of emotional displays in the presence of marketing mix variables.
+
+				2. It establishes that the elasticities of a salesperson’s emotional displays are uniformly negative, including that of happiness, which is a provocative finding.
+
+				3. It introduces the sales impact of marketing mix activities (i.e., product, price, display duration, and free shipping) in the emotional displays literature.
+
+				4. It marks the first empirical study to show that the presence of a host’s face in the video frames is not only positively associated with sales, but also increases sales by 0.61%.
+
+				5. It offers guidance to firms on re-training of sales personnel to support the implementation of “selling with a straight face” as a maxim for their sales professionals.
+       			</textarea>
+			  </section>
+			  <section>
+				<strong>THANK YOU!</strong><br>
+				<img src="https://d1bvpoagx8hqbg.cloudfront.net/originals/experience-istanbul-turkey-fozeu-896a8eefdf82a4e148a0d1179b267a18.jpg" alt="IST_TR"><br><br>
+				I would like to answer if you have any questions...
+			  </section>
+			</div>
+		  </div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
+		<script>
+		Reveal.initialize({
+			math: {
+			mathjax: 'https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js',
+			config: 'TeX-AMS_HTML-full',
+			// pass other options into `MathJax.Hub.Config()`
+			TeX: { Macros: { RR: "{\\bf R}" } }
+			},
+			plugins: [ RevealMath ]
+		});
+		</script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				controls: true,
+				history: true,
+				hash: true,
+				center: true,
+				transition: Reveal.getQueryHash().transition || 'fade',// default/cube/page/concave/zoom/linear/fade/none
+
+				//width: '100%',
+                //height: '100%',
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
